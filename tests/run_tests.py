@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+import sys
+
+def main() -> int:
+    print("QuickDock 0.1.0: tests not wired yet.", file=sys.stderr)
+    return 1
+
+if __name__ == "__main__":
+    raise SystemExit(main())

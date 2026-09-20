@@ -1,0 +1,4 @@
+* text=auto
+*.png linguist-vendored
+*.jpg linguist-vendored
+*.ico linguist-vendored

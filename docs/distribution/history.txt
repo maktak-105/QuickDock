@@ -1,0 +1,6 @@
+1.0.0 — 2026-09-20
+- Drop-to-store, hover expand left, click launch, drag to move, always on top
+- Confirm delete, 48px icons, OLE RegisterDragDrop
+
+0.1.0 — 2026-09-19
+- Project scaffold

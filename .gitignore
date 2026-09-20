@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env
+
+# ログ・一時ファイル
+*.log
+*.dat
+*_debug.log
+
+# エディタ
+.vscode/
+.idea/
+
+# build: 中間生成物
+build/
+
+scripts/.venv/
+src/**/*.o
+src/**/*.dll
+
+dist/*
+!dist/.gitkeep
+
+src/**/bin/
+src/**/obj/
+proto/ref/
+proto/frames/
+proto/frames2/
+proto/*.exe
+proto/**/__pycache__/
+
+CODEX_PROJECT_NOTE.txt

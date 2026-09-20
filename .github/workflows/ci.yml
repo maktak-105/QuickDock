@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  placeholder:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scaffold check
+        shell: pwsh
+        run: |
+          foreach ($f in @('README.md','LICENSE','docs/spec.md','src/engine/engine.h')) {
+            if (-not (Test-Path $f)) { throw "Missing $f" }
+          }
