@@ -2,14 +2,17 @@
 
 A borderless floating dock for Windows (WinForms / .NET 10). Drop shortcuts onto it, hover to expand, click to launch.
 
+Version: **1.0.0**
+
 ## Using the binary
 
-Build, then **double-click** `dist\QuickDock.exe` in Explorer (normal user). Do not leave it running from an elevated terminal.
+From the repository root, build with the .NET 10 SDK; see [the development environment guide](docs/environment.md).
 
 ```powershell
-cd C:\Users\makta\source\QuickDock
-scripts\build.bat
+.\scripts\build.bat
 ```
+
+Then **double-click** `dist\QuickDock.exe` in Explorer (normal user). Do not leave it running from an elevated terminal.
 
 - Drop `.lnk` / `.exe` onto the dock (`%APPDATA%\QuickDock\pins`)
 - Hover to expand (max 6 icons per row, then wrap down)
@@ -17,14 +20,14 @@ scripts\build.bat
 - Left-click launches; right-click: **Run as administrator** / **Delete**
 - Drag icons to reorder
 - Drag the dock handle to move it
-- Handle or tray right-click: **Always on top**, Exit
+- Handle or tray right-click: **Run at Windows startup**, **Always on top**, Exit
 
 If Explorer shows the “no drop” cursor, QuickDock is almost certainly running **as Administrator**. Quit that instance and start the exe from Explorer. See `docs/spec_jp.md` section 7.
 
 ## Tests
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File proto\selftest.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tests\selftest.ps1
 ```
 
 ## License

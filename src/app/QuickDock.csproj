@@ -8,9 +8,9 @@
     <UseWPF>false</UseWPF>
     <AssemblyName>QuickDock</AssemblyName>
     <RootNamespace>QuickDock</RootNamespace>
-    <Version>3.2.2</Version>
-    <FileVersion>3.2.2.0</FileVersion>
-    <InformationalVersion>3.2.2</InformationalVersion>
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <InformationalVersion>1.0.0</InformationalVersion>
     <Product>QuickDock</Product>
     <Authors>maktak-105</Authors>
     <Copyright>Copyright (c) 2026 maktak-105</Copyright>

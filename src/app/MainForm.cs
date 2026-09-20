@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
+using Microsoft.Win32;
 using System.Windows.Forms;
 
 namespace QuickDock;
@@ -22,6 +23,8 @@ internal sealed class MainForm : Form
     static readonly string OrderPath = Path.Combine(ConfigDir, "order.txt");
     static readonly string ConfigPath = Path.Combine(ConfigDir, "items.txt");
     static readonly string SettingsPath = Path.Combine(ConfigDir, "settings.txt");
+    const string StartupRegistryPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
+    const string StartupValueName = "QuickDock";
 
     readonly List<string> _items = new();
     readonly ToolTip _tip = new() { ShowAlways = true, InitialDelay = 0, ReshowDelay = 0, AutoPopDelay = 8000 };
@@ -79,7 +82,7 @@ internal sealed class MainForm : Form
         _tray = new NotifyIcon
         {
             Visible = true,
-            Text = "QuickDock 3.2.2",
+            Text = "QuickDock 1.0.0",
             Icon = appIcon,
             ContextMenuStrip = BuildMenu()
         };
@@ -510,6 +513,29 @@ internal sealed class MainForm : Form
     ContextMenuStrip BuildMenu()
     {
         var menu = new ContextMenuStrip();
+        var startup = new ToolStripMenuItem("Windows起動時に実行")
+        {
+            Checked = IsStartupEnabled(),
+            CheckOnClick = true
+        };
+        bool refreshingStartup = false;
+        startup.CheckedChanged += (_, _) =>
+        {
+            if (refreshingStartup) return;
+            try
+            {
+                SetStartupEnabled(startup.Checked);
+            }
+            catch (Exception ex)
+            {
+                refreshingStartup = true;
+                startup.Checked = !startup.Checked;
+                refreshingStartup = false;
+                MessageBox.Show(this, "起動設定を保存できませんでした。\n" + ex.Message,
+                    "QuickDock", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        };
+        menu.Items.Add(startup);
         var top = new ToolStripMenuItem("常に前面") { Checked = _topMost, CheckOnClick = true };
         top.CheckedChanged += (_, _) =>
         {
@@ -520,8 +546,31 @@ internal sealed class MainForm : Form
         menu.Items.Add(top);
         menu.Items.Add("終了", null, (_, _) => Close());
         menu.Closed += (_, _) => { _menuOpen = false; };
-        menu.Opening += (_, _) => { _menuOpen = true; top.Checked = _topMost; };
+        menu.Opening += (_, _) =>
+        {
+            _menuOpen = true;
+            refreshingStartup = true;
+            startup.Checked = IsStartupEnabled();
+            refreshingStartup = false;
+            top.Checked = _topMost;
+        };
         return menu;
+    }
+
+    static bool IsStartupEnabled()
+    {
+        using var key = Registry.CurrentUser.OpenSubKey(StartupRegistryPath, writable: false);
+        return key?.GetValue(StartupValueName) is string;
+    }
+
+    static void SetStartupEnabled(bool enabled)
+    {
+        using var key = Registry.CurrentUser.CreateSubKey(StartupRegistryPath, writable: true)
+            ?? throw new IOException("ユーザーの起動設定を開けませんでした。");
+        if (enabled)
+            key.SetValue(StartupValueName, "\"" + Application.ExecutablePath + "\"", RegistryValueKind.String);
+        else
+            key.DeleteValue(StartupValueName, throwOnMissingValue: false);
     }
 
     void ShowMenu()

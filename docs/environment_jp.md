@@ -3,17 +3,19 @@
 ## ツール
 
 - Windows 10/11 x64
-- .NET Framework 4.x の `csc.exe`（標準パス `C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe`）
+- .NET 10 SDK（`dotnet publish`で製品をビルド）
+- 操作付きスモークテスト用のWindows PowerShell 5.1またはPowerShell 7
+- .NET Framework 4.x の `csc.exe` はスモークテスト用OLEヘルパーのコンパイルにのみ使用
 - Git
-- 自動テスト用に PowerShell
 
-製品本体に Python / MinGW / WebView2 は不要。
+製品本体のビルド・実行に Python / MinGW / WebView2 / .NET Frameworkコンパイラーは不要。
 
 ## ビルド
 
+リポジトリルートで実行します。
+
 ```powershell
-cd C:\Users\makta\source\QuickDock
-scripts\build.bat
+.\scripts\build.bat
 ```
 
 成果物: `dist\QuickDock.exe`
@@ -29,7 +31,7 @@ dist\QuickDock.exe
 ## テスト
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File proto\selftest.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tests\selftest.ps1
 ```
 
 ## トラブル

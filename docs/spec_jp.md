@@ -7,7 +7,7 @@
 - **対象OS**: Windows 10 / 11 (64-bit)
 - **実装**: C# / WinForms / .NET 10（`dotnet publish`、win-x64 単体）
 - **配布形態**: `dist\QuickDock.exe`（単体）。GitHub Releases の ZIP は未公開。
-- **バージョン**: 3.2.2
+- **バージョン**: 1.0.0
 - **アイコン**: `assets/QuickDock-icon.png`（ガラス棚のドック）。EXE は `src/app/QuickDock.ico`
 
 ## 2. 画面
@@ -27,7 +27,9 @@
 | 格納アイコン同士をドラッグ | 並べ替え（`order.txt`） |
 | 格納アイコンを右クリック | **管理者として実行**、**削除**（削除は確認あり） |
 | ドック本体を左ドラッグ | 画面上を移動。位置を保存 |
-| 本体を右クリック／トレイ | **常に前面**、終了 |
+| 本体を右クリック／トレイ | **Windows起動時に実行**、**常に前面**、終了 |
+
+Windows起動時の実行設定はユーザー単位でレジストリ `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` に保存し、現在の実行ファイルを起動する。
 
 ## 4. データ
 
@@ -45,10 +47,10 @@
 
 ```powershell
 scripts\build.bat
-powershell -NoProfile -ExecutionPolicy Bypass -File proto\selftest.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tests\selftest.ps1
 ```
 
-`selftest.ps1` は窓サイズ、ヒットテスト、D&D 登録、クリック起動を確認する。
+`tests\selftest.ps1` は窓サイズ、ヒットテスト、D&D 登録、クリック起動を確認する。
 
 ## 7. ドロップと管理者権限
 

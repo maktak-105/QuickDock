@@ -1,12 +1,7 @@
 # proto/
 
-製品は `src\app\QuickDock.cs` → `dist\QuickDock.exe`。
+製品本体は `src\app\Program.cs` / `MainForm.cs`（C# / WinForms / .NET 10）です。
+`scripts\build.bat` で `dist\QuickDock.exe` を発行します。
 
-ここには自動テストだけ置く。
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File proto\selftest.ps1
-```
-
-- `selftest.ps1` … 収納サイズ、ヒットテスト、D&D 登録、左展開、クリック起動
-- `DropTest.exe` … selftest が使う OLE ドロップ擬似（ビルドは selftest 内）
+このフォルダーには旧実装（`legacy_cpp/`）や動作調査用のプロトタイプを置きます。製品のビルドや配布には含めません。
+現行製品のドロップ・展開・起動スモークテストと、そのヘルパーは `tests/` にあります。

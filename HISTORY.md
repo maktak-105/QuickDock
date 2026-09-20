@@ -1,6 +1,14 @@
 # Changelog
 
-## 3.2.2 — 2026-09-20
+Public version is **1.0.0**. Entries 1.0.1–3.2.2 below are unreleased development notes (kept).
+
+## 1.0.0 — 2026-09-20 (first public)
+
+- Borderless floating dock; Explorer drop; hover expand; reorder; run as admin
+- Option to run QuickDock when the current user signs in to Windows
+- Explorer cannot drop onto an elevated instance (UIPI)
+
+## 3.2.2 — 2026-09-20 (unreleased)
 
 - Icon context menu: Run as administrator / Delete
 - Name tooltip shows immediately after a drop
@@ -41,7 +49,7 @@
 - 48px icons via SHIL_EXTRALARGE
 - OLE `RegisterDragDrop` for Explorer (no-drop cursor)
 - `scripts\build.bat` writes `dist\QuickDock.exe`
-- `proto\selftest.ps1` checks register / expand / launch
+- `tests\selftest.ps1` checks register / expand / launch
 
 ## 0.1.0 — 2026-09-19
 

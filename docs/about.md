@@ -1,6 +1,6 @@
 # About QuickDock
 
-- **Version**: 3.2.2
+- **Version**: 1.0.0
 - **Author**: maktak-105
 - **License**: MIT
 - **GitHub**: https://github.com/maktak-105

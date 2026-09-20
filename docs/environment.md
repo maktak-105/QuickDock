@@ -3,17 +3,19 @@
 ## Tools
 
 - Windows 10/11 x64
-- .NET Framework 4.x `csc.exe` (default `C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe`)
+- .NET 10 SDK (used by `dotnet publish`)
+- Windows PowerShell 5.1 or PowerShell 7 for the interactive smoke test
+- .NET Framework 4.x `csc.exe` is used only to compile the smoke-test OLE helper
 - Git
-- PowerShell for the automated test
 
-Python, MinGW, and WebView2 are not required for the product binary.
+Python, MinGW, WebView2, and the .NET Framework compiler are not required to build or run the product.
 
 ## Build
 
+From the repository root, run:
+
 ```powershell
-cd C:\Users\makta\source\QuickDock
-scripts\build.bat
+.\scripts\build.bat
 ```
 
 Output: `dist\QuickDock.exe`
@@ -29,7 +31,7 @@ Exit from the tray or the container context menu. If the process is elevated, Ex
 ## Tests
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File proto\selftest.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tests\selftest.ps1
 ```
 
 ## Troubleshooting

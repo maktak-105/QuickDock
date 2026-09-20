@@ -7,7 +7,7 @@
 - **OS**: Windows 10 / 11 (64-bit)
 - **Implementation**: C# / WinForms / .NET 10 (`dotnet publish`, win-x64 self-contained)
 - **Distribution**: `dist\QuickDock.exe`. GitHub Release ZIP not published yet.
-- **Version**: 3.2.2
+- **Version**: 1.0.0
 - **Icon**: `assets/QuickDock-icon.png`; EXE uses `src/app/QuickDock.ico`
 
 ## 2. UI
@@ -25,7 +25,9 @@ Borderless ~64×64 dock tile when collapsed. Expanded: up to 6 icons per row, th
 | Drag icons | Reorder (`order.txt`) |
 | Right-click icon | **Run as administrator**, **Delete** (delete confirms) |
 | Drag the dock handle | Move; save position |
-| Right-click handle / tray | **Always on top**, Exit |
+| Right-click handle / tray | **Run at Windows startup**, **Always on top**, Exit |
+
+The startup option is stored per user in `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` and launches the current executable.
 
 ## 4. Data
 
@@ -43,7 +45,7 @@ Borderless ~64×64 dock tile when collapsed. Expanded: up to 6 icons per row, th
 
 ```powershell
 scripts\build.bat
-powershell -NoProfile -ExecutionPolicy Bypass -File proto\selftest.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tests\selftest.ps1
 ```
 
 ## 6. Elevation and drop

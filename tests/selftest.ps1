@@ -1,11 +1,13 @@
 $ErrorActionPreference = 'Stop'
-$proto = Split-Path -Parent $MyInvocation.MyCommand.Path
-$root = Split-Path -Parent $proto
+$testDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$root = Split-Path -Parent $testDir
 $exe = Join-Path $root 'dist\QuickDock.exe'
 $cfg = Join-Path $env:APPDATA 'QuickDock'
 $flag = Join-Path $env:TEMP 'quickdock-launched.txt'
-$probe = Join-Path $proto 'probe.bat'
+$probe = Join-Path $testDir 'probe.bat'
 $csc = 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe'
+$testOutput = Join-Path $root 'build\intermediate\tests'
+$dropTestExe = Join-Path $testOutput 'DropTest.exe'
 
 function Fail($m) { throw $m }
 function Log($m) { Write-Output $m }
@@ -14,7 +16,8 @@ Stop-Process -Name QuickDock,QuickDockProto,DropTest -Force -ErrorAction Silentl
 Start-Sleep -Milliseconds 500
 & cmd /c "$root\scripts\build.bat"
 if ($LASTEXITCODE -ne 0) { Fail 'build dock' }
-& $csc /nologo /t:exe /out:"$proto\DropTest.exe" /r:System.Windows.Forms.dll "$proto\DropTest.cs"
+New-Item -ItemType Directory -Force -Path $testOutput | Out-Null
+& $csc /nologo /t:exe /out:"$dropTestExe" /r:System.Windows.Forms.dll "$testDir\DropTest.cs"
 if ($LASTEXITCODE -ne 0) { Fail 'build droptest' }
 
 New-Item -ItemType Directory -Force -Path $cfg | Out-Null
@@ -97,7 +100,7 @@ for ($try = 1; $try -le 3 -and -not $got; $try++) {
     $dy = [int](($r.T + $r.B) / 2)
     Log "T2 try $try drop=$dx,$dy size=${w}x${h}"
     [void][ST8]::SetForegroundWindow($hwnd)
-    $dp = Start-Process -FilePath "$proto\DropTest.exe" -ArgumentList @($lnk, "$dx", "$dy") -Wait -PassThru -NoNewWindow
+    $dp = Start-Process -FilePath $dropTestExe -ArgumentList @($lnk, "$dx", "$dy") -Wait -PassThru -NoNewWindow
     if ($dp.ExitCode -eq $null) { }
     Start-Sleep -Milliseconds 400
     $items = @()
