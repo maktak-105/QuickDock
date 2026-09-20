@@ -6,7 +6,9 @@ Version: **1.0.0**
 
 ## Using the binary
 
-From the repository root, build with the .NET 10 SDK; see [the development environment guide](docs/environment.md).
+Download `QuickDock.exe` and `SHA256SUMS.txt` from [GitHub Releases](https://github.com/maktak-105/QuickDock/releases). Verify the download with `Get-FileHash .\QuickDock.exe -Algorithm SHA256` and compare it with `SHA256SUMS.txt`.
+
+To build from source, install the .NET 10 SDK; see [the development environment guide](docs/environment.md).
 
 ```powershell
 .\scripts\build.bat

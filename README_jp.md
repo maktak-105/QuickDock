@@ -6,7 +6,9 @@ Windows 用の枠なしフローティングドック。ショートカットを
 
 ## 使い方
 
-ビルドには .NET 10 SDK が必要です（[開発環境ガイド](docs/environment_jp.md)）。ビルドした `dist\QuickDock.exe` は **エクスプローラーからダブルクリック**（通常権限）で起動する。管理者のターミナルから起動したままだと、エクスプローラーからドロップできない。
+配布版の `QuickDock.exe` と `SHA256SUMS.txt` は[GitHub Releases](https://github.com/maktak-105/QuickDock/releases)から取得できます。ハッシュは `Get-FileHash .\QuickDock.exe -Algorithm SHA256` で計算し、`SHA256SUMS.txt` と照合します。
+
+ソースからビルドするには .NET 10 SDK が必要です（[開発環境ガイド](docs/environment_jp.md)）。ビルドした `dist\QuickDock.exe` は **エクスプローラーからダブルクリック**（通常権限）で起動します。管理者のターミナルから起動したままだと、エクスプローラーからドロップできません。
 
 ```powershell
 .\scripts\build.bat
