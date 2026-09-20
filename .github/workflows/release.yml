@@ -24,7 +24,11 @@ jobs:
         with:
           dotnet-version: '10.0.x'
       - name: Build self-contained app
-        run: .\scripts\build.bat
+        run: dotnet publish src\app\QuickDock.csproj --configuration Release --output dist --nologo
+      - name: Verify executable exists
+        shell: pwsh
+        run: |
+          if (-not (Test-Path dist\QuickDock.exe)) { throw 'Publish did not create dist\QuickDock.exe' }
       - name: Create SHA-256 checksum
         shell: pwsh
         run: |
