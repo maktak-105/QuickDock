@@ -27,6 +27,7 @@ internal sealed class MainForm : Form
     const string StartupValueName = "QuickDock";
 
     readonly List<string> _items = new();
+    readonly Dictionary<string, Icon?> _icons = new(StringComparer.OrdinalIgnoreCase);
     readonly ToolTip _tip = new() { ShowAlways = true, InitialDelay = 0, ReshowDelay = 0, AutoPopDelay = 8000 };
     readonly NotifyIcon _tray;
     readonly Timer _poll;
@@ -61,6 +62,7 @@ internal sealed class MainForm : Form
         Directory.CreateDirectory(PinsDir);
         MigrateOldItems();
         LoadOrder();
+        foreach (var item in _items) IconFor(item);
         LoadSettings();
         TopMost = _topMost;
         _expanded = false;
@@ -91,6 +93,7 @@ internal sealed class MainForm : Form
             _poll.Stop();
             _tray.Visible = false;
             _tray.Dispose();
+            foreach (var ico in _icons.Values) ico?.Dispose();
         };
         Dlog("start items=" + _items.Count);
     }
@@ -138,6 +141,7 @@ internal sealed class MainForm : Form
                 var dest = UniqueDest(Path.GetFileName(src));
                 File.Copy(src, dest);
                 _items.Add(dest);
+                IconFor(dest);
                 Dlog("copied " + dest);
             }
             catch (Exception ex) { Dlog("copy " + ex.Message); }
@@ -187,8 +191,26 @@ internal sealed class MainForm : Form
         EnsureHome();
         int x = _homeX - Pad - Cell * (cols - 1);
         int y = _homeY - Pad;
-        Bounds = new Rectangle(x, y, w, h);
+        if (!IsHandleCreated)
+        {
+            Bounds = new Rectangle(x, y, w, h);
+            return;
+        }
+        // Without NOCOPYBITS the old client bits land in the wrong cell and stay visible until the repaint below.
+        Native.SetWindowPos(Handle, IntPtr.Zero, x, y, w, h,
+            Native.SWP_NOZORDER | Native.SWP_NOACTIVATE | Native.SWP_NOCOPYBITS);
         Invalidate();
+        Update();
+    }
+
+    Icon? IconFor(string path)
+    {
+        if (_icons.TryGetValue(path, out var cached)) return cached;
+        Icon? ico = null;
+        try { ico = Native.FileIcon(path, IconPx); }
+        catch (Exception ex) { Dlog("icon " + ex.Message); }
+        _icons[path] = ico;
+        return ico;
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -296,7 +318,7 @@ internal sealed class MainForm : Form
             using var hi = new SolidBrush(Color.FromArgb(40, 0, 220, 230));
             g.FillRectangle(hi, x, y, Cell, Cell);
         }
-        using var ico = Native.FileIcon(_items[index], IconPx);
+        var ico = IconFor(_items[index]);
         if (ico != null)
         {
             int m = (Cell - IconPx) / 2;
@@ -505,6 +527,7 @@ internal sealed class MainForm : Form
         _menuOpen = false;
         if (r != DialogResult.Yes) return;
         try { File.Delete(_items[vis]); } catch { }
+        if (_icons.Remove(_items[vis], out var gone)) gone?.Dispose();
         _items.RemoveAt(vis);
         SaveOrder();
         LayoutDock();
@@ -737,6 +760,13 @@ internal static class Native
 
     [DllImport("user32.dll")]
     public static extern bool DestroyIcon(IntPtr hIcon);
+
+    public const uint SWP_NOZORDER = 0x0004;
+    public const uint SWP_NOACTIVATE = 0x0010;
+    public const uint SWP_NOCOPYBITS = 0x0100;
+
+    [DllImport("user32.dll")]
+    public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint flags);
 
     [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
     static extern IntPtr SHGetFileInfo(string pszPath, uint fa, ref SHFILEINFO psfi, uint cb, uint flags);
