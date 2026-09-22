@@ -50,6 +50,7 @@ internal sealed class MainForm : Form
         FormBorderStyle = FormBorderStyle.None;
         StartPosition = FormStartPosition.Manual;
         ShowInTaskbar = true;
+        ShowInTaskbar = false;
         BackColor = Color.FromArgb(16, 20, 28);
         MinimumSize = new Size(1, 1);
         DoubleBuffered = true;
@@ -85,8 +86,19 @@ internal sealed class MainForm : Form
         {
             Visible = true,
             Text = "QuickDock 1.0.0",
+            Text = "QuickDock 1.1.0",
             Icon = appIcon,
             ContextMenuStrip = BuildMenu()
+        };
+        _tray.MouseClick += (_, e) =>
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (!Visible) Show();
+                WindowState = FormWindowState.Normal;
+                Activate();
+                BringToFront();
+            }
         };
         FormClosed += (_, _) =>
         {
@@ -709,6 +721,16 @@ internal sealed class MainForm : Form
             "y=" + _homeY,
             "topmost=" + (_topMost ? "1" : "0")
         ]);
+    }
+
+    protected override CreateParams CreateParams
+    {
+        get
+        {
+            var cp = base.CreateParams;
+            cp.ExStyle |= 0x80; // WS_EX_TOOLWINDOW: Alt+Tabから除外
+            return cp;
+        }
     }
 }
 

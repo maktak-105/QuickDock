@@ -1,3 +1,7 @@
+1.1.0 — 2026-09-22
+- Hide from taskbar and Alt+Tab (WS_EX_TOOLWINDOW)
+- System tray enhancement (left-click tray icon to bring to front)
+
 1.0.0 — 2026-09-20
 - Drop-to-store, hover expand left, click launch, drag to move, always on top
 - Confirm delete, 48px icons, OLE RegisterDragDrop
