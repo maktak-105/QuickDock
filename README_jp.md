@@ -6,6 +6,8 @@ Windows 用の枠なしフローティングドック。ショートカットを
 
 ## 使い方
 
+コード署名: [SignPath.io](https://signpath.io) による無償のコード署名を利用し、証明書は [SignPath Foundation](https://signpath.org) が発行します。現在申請中で、承認後に公開するリリースから署名されます。詳細は [コード署名ポリシー](docs/code_signing_policy.md)。
+
 配布版の `QuickDock.exe` と `SHA256SUMS.txt` は[GitHub Releases](https://github.com/maktak-105/QuickDock/releases)から取得できます。ハッシュは `Get-FileHash .\QuickDock.exe -Algorithm SHA256` で計算し、`SHA256SUMS.txt` と照合します。
 
 ソースからビルドするには .NET 10 SDK が必要です（[開発環境ガイド](docs/environment_jp.md)）。ビルドした `dist\QuickDock.exe` は **エクスプローラーからダブルクリック**（通常権限）で起動します。管理者のターミナルから起動したままだと、エクスプローラーからドロップできません。

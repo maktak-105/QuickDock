@@ -6,6 +6,8 @@ Version: **1.1.0**
 
 ## Using the binary
 
+Code signing: Free code signing provided by [SignPath.io](https://signpath.io), certificate by [SignPath Foundation](https://signpath.org). The application is under review; releases published after approval will be signed. See [Code signing policy](docs/code_signing_policy.md).
+
 Download `QuickDock.exe` and `SHA256SUMS.txt` from [GitHub Releases](https://github.com/maktak-105/QuickDock/releases). Verify the download with `Get-FileHash .\QuickDock.exe -Algorithm SHA256` and compare it with `SHA256SUMS.txt`.
 
 To build from source, install the .NET 10 SDK; see [the development environment guide](docs/environment.md).
