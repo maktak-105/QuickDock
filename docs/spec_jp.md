@@ -7,7 +7,6 @@
 - **対象OS**: Windows 10 / 11 (64-bit)
 - **実装**: C# / WinForms / .NET 10（`dotnet publish`、win-x64 単体）
 - **配布形態**: `dist\QuickDock.exe`（単体）。GitHub Releases の ZIP は未公開。
-- **バージョン**: 1.0.0
 - **バージョン**: 1.1.0
 - **アイコン**: `assets/QuickDock-icon.png`（ガラス棚のドック）。EXE は `src/app/QuickDock.ico`
 

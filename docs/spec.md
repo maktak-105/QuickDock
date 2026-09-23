@@ -7,7 +7,6 @@
 - **OS**: Windows 10 / 11 (64-bit)
 - **Implementation**: C# / WinForms / .NET 10 (`dotnet publish`, win-x64 self-contained)
 - **Distribution**: `dist\QuickDock.exe`. GitHub Release ZIP not published yet.
-- **Version**: 1.0.0
 - **Version**: 1.1.0
 - **Icon**: `assets/QuickDock-icon.png`; EXE uses `src/app/QuickDock.ico`
 

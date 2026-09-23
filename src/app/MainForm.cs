@@ -85,7 +85,6 @@ internal sealed class MainForm : Form
         _tray = new NotifyIcon
         {
             Visible = true,
-            Text = "QuickDock 1.0.0",
             Text = "QuickDock 1.1.0",
             Icon = appIcon,
             ContextMenuStrip = BuildMenu()
