@@ -1,4 +1,4 @@
-QuickDock 1.0.0
+QuickDock 1.1.0
 
 Borderless floating dock. Drop shortcuts, hover to expand, click to launch.
 

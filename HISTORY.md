@@ -1,6 +1,11 @@
 # Changelog
 
-Public version is **1.0.0**. Entries 1.0.1–3.2.2 below are unreleased development notes (kept).
+Public version is **1.1.0**. Entries 1.0.1–3.2.2 below are unreleased development notes (kept).
+
+## 1.1.0 — 2026-09-23
+
+- Hide from the taskbar and Alt+Tab (WS_EX_TOOLWINDOW)
+- Left-click the tray icon to bring the dock to the front
 
 ## 1.0.0 — 2026-09-20 (first public)
 

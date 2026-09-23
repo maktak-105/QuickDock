@@ -2,7 +2,7 @@
 
 A borderless floating dock for Windows (WinForms / .NET 10). Drop shortcuts onto it, hover to expand, click to launch.
 
-Version: **1.0.0**
+Version: **1.1.0**
 
 ## Using the binary
 
