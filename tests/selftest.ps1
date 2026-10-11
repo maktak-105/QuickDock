@@ -2,8 +2,12 @@ $ErrorActionPreference = 'Stop'
 $testDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $root = Split-Path -Parent $testDir
 $exe = Join-Path $root 'dist\QuickDock.exe'
-$cfg = Join-Path $env:APPDATA 'QuickDock'
-$flag = Join-Path $env:TEMP 'quickdock-launched.txt'
+# Sandbox: every file this test writes lives under $sandbox. The real dock config
+# (%APPDATA%\QuickDock) is never read, written, or deleted.
+$sandbox = Join-Path $env:TEMP ('quickdock-selftest-' + [guid]::NewGuid().ToString('N'))
+$cfg = Join-Path $sandbox 'config'
+$flag = Join-Path $env:TEMP 'quickdock-launched.txt'  # written by probe.bat (TEMP only, not dock config)
+$realCfg = Join-Path $env:APPDATA 'QuickDock'
 $probe = Join-Path $testDir 'probe.bat'
 $csc = 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 $testOutput = Join-Path $root 'build\intermediate\tests'
@@ -12,21 +16,38 @@ $dropTestExe = Join-Path $testOutput 'DropTest.exe'
 function Fail($m) { throw $m }
 function Log($m) { Write-Output $m }
 
-Stop-Process -Name QuickDock,QuickDockProto,DropTest -Force -ErrorAction SilentlyContinue
-Start-Sleep -Milliseconds 500
+# On any failure: stop only the dock this test started and delete only the sandbox.
+trap {
+  if ($dock -and -not $dock.HasExited) { Stop-Process -Id $dock.Id -Force -ErrorAction SilentlyContinue }
+  if (Test-Path $sandbox) { Remove-Item $sandbox -Recurse -Force -ErrorAction SilentlyContinue }
+  Remove-Item Env:\QUICKDOCK_CONFIG_DIR -ErrorAction SilentlyContinue
+  break
+}
+
+# Refuse to run while a dock is already open: we do not kill the user's dock.
+if (Get-Process -Name QuickDock -ErrorAction SilentlyContinue) { Fail 'a QuickDock is already running; close it first (the test will not kill it)' }
+
+# Snapshot the real config so we can prove it was not touched.
+function Get-RealConfigSnapshot {
+  if (-not (Test-Path $realCfg)) { return 'absent' }
+  (Get-ChildItem $realCfg -Recurse -File | Sort-Object FullName |
+    ForEach-Object { '{0}|{1}|{2}' -f $_.FullName, $_.Length, $_.LastWriteTimeUtc.Ticks }) -join "`n"
+}
+$realBefore = Get-RealConfigSnapshot
+
 & cmd /c "$root\scripts\build.bat"
 if ($LASTEXITCODE -ne 0) { Fail 'build dock' }
 New-Item -ItemType Directory -Force -Path $testOutput | Out-Null
 & $csc /nologo /t:exe /out:"$dropTestExe" /r:System.Windows.Forms.dll "$testDir\DropTest.cs"
 if ($LASTEXITCODE -ne 0) { Fail 'build droptest' }
 
+# Fresh, empty sandbox config. The dock reads it through QUICKDOCK_CONFIG_DIR.
 New-Item -ItemType Directory -Force -Path $cfg | Out-Null
 Set-Content -Path (Join-Path $cfg 'items.txt') -Value $null -Encoding ASCII
 $pins = Join-Path $cfg 'pins'
 New-Item -ItemType Directory -Force -Path $pins | Out-Null
-Get-ChildItem $pins -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
-Remove-Item (Join-Path $cfg 'drop.log') -Force -ErrorAction SilentlyContinue
 Remove-Item $flag -Force -ErrorAction SilentlyContinue
+$env:QUICKDOCK_CONFIG_DIR = $cfg
 
 Add-Type @"
 using System;
@@ -61,9 +82,9 @@ public class ST8 {
 "@
 [void][ST8]::SetCursorPos(200, 200)
 
-Start-Process $exe
+$dock = Start-Process $exe -PassThru
 Start-Sleep -Seconds 1
-$procId = [uint32](Get-Process QuickDock).Id
+$procId = [uint32]$dock.Id
 $r = New-Object ST8+RECT; $w=0; $h=0; $hwnd = [IntPtr]::Zero
 if (-not [ST8]::Find($procId, [ref]$r, [ref]$w, [ref]$h, [ref]$hwnd)) { Fail 'dock window missing' }
 Log "T1 collapsed ${w}x${h} L=$($r.L) R=$($r.R)"
@@ -82,8 +103,7 @@ if ($hitPid -ne $procId) { Fail "hit-test not dock (pid $hitPid)" }
 Log 'PASS T1b hit-test'
 
 [void][ST8]::SetForegroundWindow($hwnd)
-$desk = [Environment]::GetFolderPath('Desktop')
-$lnk = Join-Path $desk 'QuickDockProbe.lnk'
+$lnk = Join-Path $sandbox 'QuickDockProbe.lnk'  # not on the Desktop
 $sh = New-Object -ComObject WScript.Shell
 $sc = $sh.CreateShortcut($lnk)
 $sc.TargetPath = $probe
@@ -136,6 +156,16 @@ Start-Sleep -Milliseconds 900
 if (-not (Test-Path $flag)) { Fail 'launch fail' }
 Log 'PASS T4 click-launch'
 
-Remove-Item $lnk -Force -ErrorAction SilentlyContinue
-Remove-Item (Join-Path $pins 'QuickDockProbe.lnk') -Force -ErrorAction SilentlyContinue
 Log 'ALL PASS'
+
+# Cleanup: stop only the dock this test started, delete only the sandbox.
+function Invoke-Cleanup {
+  if ($dock -and -not $dock.HasExited) { Stop-Process -Id $dock.Id -Force -ErrorAction SilentlyContinue }
+  Remove-Item Env:\QUICKDOCK_CONFIG_DIR -ErrorAction SilentlyContinue
+  if (Test-Path $sandbox) { Remove-Item $sandbox -Recurse -Force -ErrorAction SilentlyContinue }
+}
+Invoke-Cleanup
+
+# Safety net: the real dock config must be byte-for-byte the same as before.
+if ((Get-RealConfigSnapshot) -ne $realBefore) { Fail 'REAL dock config changed during the test' }
+Log 'PASS real dock config untouched'
