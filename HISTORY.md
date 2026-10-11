@@ -1,6 +1,13 @@
 # Changelog
 
-Public version is **1.1.0**. Entries 1.0.1–3.2.2 below are unreleased development notes (kept).
+Public version is **1.1.1**. Entries 1.0.1–3.2.2 below are unreleased development notes (kept).
+
+## 1.1.1 — 2026-10-11
+
+- Right-click menu: **Help** submenu with **Help** (usage) and **About** (version info)
+- About window: dark card, creator badge, Japanese / English switch
+- Window title and About version come from the project version
+- Self-test runs against a sandbox config and no longer touches the real dock contents
 
 ## 1.1.0 — 2026-09-23
 

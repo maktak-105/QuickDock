@@ -7,7 +7,7 @@
 - **OS**: Windows 10 / 11 (64-bit)
 - **Implementation**: C# / WinForms / .NET 10 (`dotnet publish`, win-x64 self-contained)
 - **Distribution**: `dist\QuickDock.exe`. GitHub Release ZIP not published yet.
-- **Version**: 1.1.0
+- **Version**: 1.1.1
 - **Icon**: `assets/QuickDock-icon.png`; EXE uses `src/app/QuickDock.ico`
 
 ## 2. UI
@@ -25,7 +25,9 @@ Borderless ~64×64 dock tile when collapsed. Expanded: up to 6 icons per row, th
 | Drag icons | Reorder (`order.txt`) |
 | Right-click icon | **Run as administrator**, **Delete** (delete confirms) |
 | Drag the dock handle | Move; save position |
-| Right-click handle / tray | **Run at Windows startup**, **Always on top**, Exit |
+| Right-click handle / tray | **Run at Windows startup**, **Always on top**, **Help** (Help / About), Exit |
+
+Help (usage) and About (version info) open as dark, modal windows. About shows the version, development environment, author, and the creator badge (`assets/maktak105-V04-01.jpg`, 160 px wide). Both windows switch between Japanese and English.
 
 The startup option is stored per user in `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` and launches the current executable.
 
