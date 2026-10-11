@@ -17,8 +17,11 @@ internal sealed class MainForm : Form
     const int IconPx = 48;
     const int MaxItemCols = 6;
 
-    static readonly string ConfigDir = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "QuickDock");
+    // QUICKDOCK_CONFIG_DIR is set only by tests/selftest.ps1 to keep the real dock contents untouched.
+    static readonly string ConfigDir =
+        Environment.GetEnvironmentVariable("QUICKDOCK_CONFIG_DIR") is { Length: > 0 } overrideDir
+            ? overrideDir
+            : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "QuickDock");
     static readonly string PinsDir = Path.Combine(ConfigDir, "pins");
     static readonly string OrderPath = Path.Combine(ConfigDir, "order.txt");
     static readonly string ConfigPath = Path.Combine(ConfigDir, "items.txt");
