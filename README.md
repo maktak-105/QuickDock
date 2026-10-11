@@ -2,7 +2,7 @@
 
 A borderless floating dock for Windows (WinForms / .NET 10). Drop shortcuts onto it, hover to expand, click to launch.
 
-Version: **1.1.0**
+Version: **1.1.1**
 
 ## Using the binary
 
@@ -24,7 +24,7 @@ Then **double-click** `dist\QuickDock.exe` in Explorer (normal user). Do not lea
 - Left-click launches; right-click: **Run as administrator** / **Delete**
 - Drag icons to reorder
 - Drag the dock handle to move it
-- Handle or tray right-click: **Run at Windows startup**, **Always on top**, Exit
+- Handle or tray right-click: **Run at Windows startup**, **Always on top**, **Help** (usage / About), Exit
 
 If Explorer shows the “no drop” cursor, QuickDock is almost certainly running **as Administrator**. Quit that instance and start the exe from Explorer. See `docs/spec_jp.md` section 7.
 

@@ -88,7 +88,7 @@ internal sealed class MainForm : Form
         _tray = new NotifyIcon
         {
             Visible = true,
-            Text = "QuickDock 1.1.0",
+            Text = "QuickDock " + HelpUi.Version,
             Icon = appIcon,
             ContextMenuStrip = BuildMenu()
         };
@@ -581,6 +581,10 @@ internal sealed class MainForm : Form
             SaveSettings();
         };
         menu.Items.Add(top);
+        var help = new ToolStripMenuItem("ヘルプ");
+        help.DropDownItems.Add("使い方", null, (_, _) => ShowHelpDialog(HelpDialogs.ShowHelp));
+        help.DropDownItems.Add("バージョン情報", null, (_, _) => ShowHelpDialog(HelpDialogs.ShowAbout));
+        menu.Items.Add(help);
         menu.Items.Add("終了", null, (_, _) => Close());
         menu.Closed += (_, _) => { _menuOpen = false; };
         menu.Opening += (_, _) =>
@@ -614,6 +618,20 @@ internal sealed class MainForm : Form
     {
         _menuOpen = true;
         BuildMenu().Show(Cursor.Position);
+    }
+
+    // Keep the dock expanded while a help or about window is open.
+    void ShowHelpDialog(Action show)
+    {
+        _menuOpen = true;
+        try
+        {
+            show();
+        }
+        finally
+        {
+            _menuOpen = false;
+        }
     }
 
     void EnsureHome()
