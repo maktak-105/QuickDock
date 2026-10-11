@@ -176,15 +176,22 @@ internal sealed class HelpCard : DarkCard
         _body.ForeColor = HelpUi.Text;
         _body.MaximumSize = new Size(480, 0);
         _ok = MakeOk();
+        // Set the text before measuring: AutoSize labels must have their final text to lay out.
+        ApplyText();
 
         int y = 20;
         Place(_title, ref y, 14);
         Place(_body, ref y, 18);
-        _ok.Location = new Point((ClientSize.Width - _ok.Width) / 2, y);
         Controls.Add(_ok);
-        ClientSize = new Size(ClientSize.Width, _ok.Bottom + 22);
+        Relayout();
         SetLanguageButton();
-        ApplyText();
+    }
+
+    // The card height follows the text, so a language switch re-fits it.
+    void Relayout()
+    {
+        _ok.Location = new Point((ClientSize.Width - _ok.Width) / 2, _body.Bottom + 18);
+        ClientSize = new Size(ClientSize.Width, _ok.Bottom + 22);
     }
 
     protected override void ApplyText()
@@ -213,6 +220,7 @@ internal sealed class HelpCard : DarkCard
             "　If started from an elevated terminal, Explorer cannot drop onto it.");
         Text = HelpUi.T("使い方", "Help");
         _ok.Text = "OK";
+        if (_body.Parent != null) Relayout();
     }
 }
 
@@ -242,6 +250,7 @@ internal sealed class AboutCard : DarkCard
         _ver.ForeColor = HelpUi.Accent;
         _ver.Text = "Ver. " + HelpUi.Version;
         _ok = MakeOk();
+        ApplyText();  // final text first, so the measured heights match what is shown
 
         // Layout top to bottom: language pill (drawn at the top right), name, version, divider, sections, badge, OK.
         int y = 56;
@@ -252,7 +261,7 @@ internal sealed class AboutCard : DarkCard
         int dividerY = y;
         y += 14;
         Place(_devHead, ref y, 2);
-        Place(_dev, ref y, 14);
+        Place(_dev, ref y, 22);
         Place(_authorHead, ref y, 2);
         Place(_author, ref y, 16);
 
@@ -278,7 +287,6 @@ internal sealed class AboutCard : DarkCard
         };
 
         SetLanguageButton();
-        ApplyText();
     }
 
     protected override void ApplyText()
@@ -311,6 +319,8 @@ internal static class HelpDialogs
         overlay.Show();
         try
         {
+            // Both are topmost; the card must sit above the dimming layer.
+            card.TopMost = true;
             card.ShowDialog(overlay);
         }
         finally
